@@ -2,7 +2,6 @@
 using Core.Specifications;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace Infrastructure.Data;
 
 public class SpecificationEvaluator<TEntity> where TEntity : BaseEntity
