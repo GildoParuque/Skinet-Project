@@ -7,9 +7,7 @@ using AutoMapper;
 
 namespace SkinetAPI.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class ProductController : ControllerBase
+public class ProductController : BaseApiController
 {
     private readonly IGenericRepository<Product> _productsRepo;
 
