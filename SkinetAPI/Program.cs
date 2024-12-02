@@ -13,8 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
+
 
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
@@ -45,6 +44,8 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
         return new BadRequestObjectResult(errorResponse);
     };
 });
+
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "SkiNet API", Version = "v1" });
@@ -75,11 +76,11 @@ builder.Services.AddSwaggerGen(c =>
     }
 
     // Configure the HTTP request pipeline.
-    //if (app.Environment.IsDevelopment())
-    //{
-    //    app.UseSwagger();
-    //    app.UseSwaggerUI();
-    //}
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
     app.UseMiddleware<ExceptionMiddleware>();
 
     app.UseStatusCodePagesWithReExecute("/errors/{0}");
@@ -99,7 +100,6 @@ builder.Services.AddSwaggerGen(c =>
     });
 
     app.MapControllers();
-
 
     app.Run();
 }
