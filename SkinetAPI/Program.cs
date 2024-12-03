@@ -1,10 +1,7 @@
-using Core.Interfaces;
 using Infrastructure.Data;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 using SkinetAPI.Data;
-using SkinetAPI.Errors;
+using SkinetAPI.Extensions;
 using SkinetAPI.Helpers;
 using SkinetAPI.Middleware;
 
@@ -22,34 +19,13 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<StoreContext>(options =>
     options.UseSqlServer(connectionString));
 
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
+
+builder.Services.AddApplicationServices();
+builder.Services.AddSwaggerDocumentation();
+
 builder.Services.AddAutoMapper(typeof(MappingProfiles));
-
-//validation Error
-builder.Services.Configure<ApiBehaviorOptions>(options =>
-{
-    options.InvalidModelStateResponseFactory = actionContext =>
-    {
-        var errors = actionContext.ModelState
-                                    .Where(e => e.Value.Errors.Count > 0)
-                                    .SelectMany(x => x.Value.Errors)
-                                    .Select(x => x.ErrorMessage);
-
-        var errorResponse = new ApiValdationErrorResponse
-        {
-            Errors = errors
-        };
-
-        return new BadRequestObjectResult(errorResponse);
-    };
-});
-
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "SkiNet API", Version = "v1" });
-});
+
 
 
 {
@@ -93,11 +69,7 @@ builder.Services.AddSwaggerGen(c =>
 
     app.UseAuthorization();
 
-    app.UseSwagger();
-    app.UseSwaggerUI(c => 
-    { 
-        c.SwaggerEndpoint("swagger/v1/swagger.json", "SkiNet API v1"); 
-    });
+    app.UseSwaggerDocumentation();
 
     app.MapControllers();
 
